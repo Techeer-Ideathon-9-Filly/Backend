@@ -10,10 +10,12 @@ class SignupView(APIView):
         serializer = UserCreateRequest(data=request.data)
 
         if serializer.is_valid():
-            id = serializer.validated_data.get('id')
-            if User.objects.filter(id=id).exists():
+            email = serializer.validated_data.get('email')
+            password = serializer.validated_data.get('password')
+            nickname = serializer.validated_data.get('nickname')
+            if User.objects.filter(email=email).exists():
                 return Response({"이미 존재하는 회원입니다."}, status=status.HTTP_400_BAD_REQUEST)
-            serializer.save()
+            UserSerializer.create(self, email=email, password=password, nickname=nickname)
             return Response({"회원가입이 완료되었습니다."}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
